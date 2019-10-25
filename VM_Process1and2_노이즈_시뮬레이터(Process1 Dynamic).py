@@ -19,7 +19,7 @@ import os
 # from pandas import DataFrame, Series
 # import pandas as pd
 
-os.chdir("D:/10. 대학원/04. Source/09. VM_Source/10. DynamicSampling/")
+os.chdir("D:/10. 대학원/04. Source/09. VM_Source/11. P2DynamicSampling/")
 
 A_p1 = np.array([[0.5, -0.2], [0.25, 0.15]])    #recipe gain matrix
 d_p1 = np.array([[0.1, 0], [0.05, 0]])  #drift matrix
@@ -30,13 +30,12 @@ A_p2 = np.array([[1, 0.1], [-0.5, 0.2]])
 d_p2 = np.array([[0, 0.05], [0, 0.05]])
 C_p2 = np.transpose(np.array([[0.1, 0, 0, -0.2, 0.1], [0, -0.2, 0, 0.3, 0]]))
 F_p2 = np.array([[2, 0], [0, 2]])
-SEED1 = 111999999  #111999999
-SEED2 = 411  #999111111
+SEED1 = 100000  #111999999 411    #9일때 All MAPE 37.25%   411일때 All MAPE 45.48%
+SEED2 = 107  #999111111 411  1502 693
 # Process 변수와 출력 관련 system gain matrix
 M = 10
 Z_DoE = 12
 Z_VM = 50
-Nz_RUN = 15
 
 v1_PLS = 0.6
 v2_PLS = 0.6
@@ -50,7 +49,10 @@ N = M * S1 + dM * S2
 dStart = S1 + 1  #25 * 10 + 30 * 5
 Z_DoE = 12
 v_PLS = 0.6
-Nz_RUN = 20
+
+Nz_RUN_1 = 15
+Nz_RUN_2 = 20
+
 
 def main():
     fdh_graph = FDC_Graph()
@@ -76,37 +78,41 @@ def main():
 
     fdh_graph.plt_show5(ez_run_out, N, M, dM, S1, Noise=True)
 
-    np.savetxt("output/Error_VMresult.csv", Error_VMresult, delimiter=",", fmt="%.4f")
-    np.savetxt("output/Error_ACTResult.csv", Error_ACTResult, delimiter=",", fmt="%.4f")
+    # np.savetxt("output/Error_VMresult.csv", Error_VMresult, delimiter=",", fmt="%.4f")
+    # np.savetxt("output/Error_ACTResult.csv", Error_ACTResult, delimiter=",", fmt="%.4f")
 
     p1_q1_mape_Queue = []
 
     # metrology 마다 보여주는 MAPE 값이 의미가 없다.
-    for z in np.arange(Nz_RUN, Z_VM, 1):
+    for z in np.arange(Nz_RUN_1, Z_VM, 1):
         mape = fdh_graph.mean_absolute_percentage_error(z + 1, p1_y_act[((z + 1) * M) - 1][0], p1_y_prd[((z + 1) * M) - 1][0])
-        p1_q1_mape_Queue.append(mape)
+        if z >= 15 and z < 20:
+            print('z = ', z, ', MAPE = ', mape)
+        else:
+            p1_q1_mape_Queue.append(mape)
 
-    print('Process-1 q1 Every Metrology MAPE After 15 Lot : {0:.2f}%'.format(np.mean(p1_q1_mape_Queue)))
+    print('Process-1 q1 Every Metrology MAPE After 20 Lot : {0:.2f}%'.format(np.mean(p1_q1_mape_Queue)))
 
-    np.savetxt("output/p1_mape.csv", p1_q1_mape_Queue, delimiter=",", fmt="%.4f")
-    np.savetxt("output/Error_VMresult1.csv", Error_VMresult, delimiter=",", fmt="%.4f")
-    np.savetxt("output/p1_y_prd.csv", p1_y_prd, delimiter=",", fmt="%.4f")
-    np.savetxt("output/p1_y_act.csv", p1_y_act, delimiter=",", fmt="%.4f")
-    np.savetxt("output/Error_ACTResult.csv", Error_ACTResult, delimiter=",", fmt="%.4f")
+    # np.savetxt("output/p1_mape.csv", p1_q1_mape_Queue, delimiter=",", fmt="%.4f")
+    # np.savetxt("output/Error_VMresult1.csv", Error_VMresult, delimiter=",", fmt="%.4f")
+    # np.savetxt("output/p1_y_prd.csv", p1_y_prd, delimiter=",", fmt="%.4f")
+    # np.savetxt("output/p1_y_act.csv", p1_y_act, delimiter=",", fmt="%.4f")
+    # np.savetxt("output/Error_ACTResult.csv", Error_ACTResult, delimiter=",", fmt="%.4f")
 
     p1_q1_mape_Queue = []
 
-    for i in np.arange(Nz_RUN * M, Z_VM * M, 1):
+    for i in np.arange(Nz_RUN_2 * M, Z_VM * M, 1):
         mape = fdh_graph.mean_absolute_percentage_error(i + 1, p1_y_act[i][0], p1_y_prd[i][0])
         p1_q1_mape_Queue.append(mape)
 
-    print('Process-1 q1 All MAPE After 15 Lot : {0:.2f}%'.format(np.mean(p1_q1_mape_Queue)))
+    print('Process-1 q1 All MAPE After 20 Lot : {0:.2f}%'.format(np.mean(p1_q1_mape_Queue)))
+    #print('Process-1 q1 All MAPE After 15 Lot : {0:.2f}%'.format(np.mean(p1_q1_mape_Queue)))
 
-    np.savetxt("output/p1_mape.csv", p1_q1_mape_Queue, delimiter=",", fmt="%.4f")
-    np.savetxt("output/Error_VMresult1.csv", Error_VMresult, delimiter=",", fmt="%.4f")
-    np.savetxt("output/p1_y_prd.csv", p1_y_prd, delimiter=",", fmt="%.4f")
-    np.savetxt("output/p1_y_act.csv", p1_y_act, delimiter=",", fmt="%.4f")
-    np.savetxt("output/Error_ACTResult.csv", Error_ACTResult, delimiter=",", fmt="%.4f")
+    # np.savetxt("output/p1_mape.csv", p1_q1_mape_Queue, delimiter=",", fmt="%.4f")
+    # np.savetxt("output/Error_VMresult1.csv", Error_VMresult, delimiter=",", fmt="%.4f")
+    # np.savetxt("output/p1_y_prd.csv", p1_y_prd, delimiter=",", fmt="%.4f")
+    # np.savetxt("output/p1_y_act.csv", p1_y_act, delimiter=",", fmt="%.4f")
+    # np.savetxt("output/Error_ACTResult.csv", Error_ACTResult, delimiter=",", fmt="%.4f")
 
     fwc_p2_act = VM_Process2_노이즈시뮬레이터(A_p2, d_p2, C_p2, F_p2, v1_PLS, p1_y_prd, p1_y_act, SEED2)
     fwc_p2_act.DoE_Run(lamda_PLS=v2_PLS, Z=Z_DoE, M=M, f=o_y_act)  # DoE Run ACT값으로 가능
@@ -118,24 +124,24 @@ def main():
     p2_q2_mape_Queue = []
 
     # metrology 마다 보여주는 MAPE 값이 의미가 없다.
-    for z in np.arange(Nz_RUN, Z_VM, 1):
+    for z in np.arange(Nz_RUN_2, Z_VM, 1):
         mape = fdh_graph.mean_absolute_percentage_error(z + 1, p2_y_act[((z + 1) * M) - 1][1], p2_y_prd[((z + 1) * M) - 1][1])
         p2_q2_mape_Queue.append(mape)
 
-    print('Process-2 q2 Every Metrology MAPE After 15 Lot : {0:.2f}%'.format(np.mean(p2_q2_mape_Queue)))
+    print('Process-2 q2 Every Metrology MAPE After 20 Lot : {0:.2f}%'.format(np.mean(p2_q2_mape_Queue)))
     p2_q2_mape_Queue = []
 
-    for i in np.arange(Nz_RUN * M, Z_VM * M, 1):
+    for i in np.arange(Nz_RUN_2 * M, Z_VM * M, 1):
         mape = fdh_graph.mean_absolute_percentage_error(i + 1, p2_y_act[i][1], p2_y_prd[i][1])
         p2_q2_mape_Queue.append(mape)
 
-    print('Process-2 q2 All MAPE After 15 Lot : {0:.2f}%'.format(np.mean(p2_q2_mape_Queue)))
+    print('Process-2 q2 All MAPE After 20 Lot : {0:.2f}%'.format(np.mean(p2_q2_mape_Queue)))
 
-    np.savetxt("output/p2_mape.csv", p2_q2_mape_Queue, delimiter=",", fmt="%.4f")
-    np.savetxt("output/p2_ACT_Output.csv", Error_VMresult, delimiter=",", fmt="%.4f")
-    np.savetxt("output/p1_y_prd.csv", p2_y_prd, delimiter=",", fmt="%.4f")
-    np.savetxt("output/p1_y_act.csv", p2_y_act, delimiter=",", fmt="%.4f")
-    np.savetxt("output/p2_ACT_Output.csv", Error_ACTResult, delimiter=",", fmt="%.4f")
+    # np.savetxt("output/p2_mape.csv", p2_q2_mape_Queue, delimiter=",", fmt="%.4f")
+    # np.savetxt("output/p2_ACT_Output.csv", Error_VMresult, delimiter=",", fmt="%.4f")
+    # np.savetxt("output/p1_y_prd.csv", p2_y_prd, delimiter=",", fmt="%.4f")
+    # np.savetxt("output/p1_y_act.csv", p2_y_act, delimiter=",", fmt="%.4f")
+    # np.savetxt("output/p2_ACT_Output.csv", Error_ACTResult, delimiter=",", fmt="%.4f")
 
     p2_q2_mape_Queue = []
 
