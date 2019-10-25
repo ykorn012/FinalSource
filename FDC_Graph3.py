@@ -116,7 +116,7 @@ class FDC_Graph:
             plt.yticks(np.arange(-5.5, 6, 0.5))
 
         dic = {50: "50 \n (5 runs)", 100: "100 \n (10 runs)", 150: "150 \n (15 runs)", 200: "200 \n (20 runs)",
-               250: "250 \n (25 runs)", 300: "300 \n (35 runs)", 350: "350 \n (45 runs)", 400: "400 \n (55 runs)"}
+               250: "250 \n (30 runs)", 300: "300 \n (40 runs)", 350: "350 \n (50 runs)", 400: "400 \n (60 runs)"}
         labels = [ticks[i] if t not in dic.keys() else dic[t] for i, t in enumerate(ticks)]
 
         axes = plt.gca()
