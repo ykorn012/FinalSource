@@ -19,7 +19,7 @@ import os
 # from pandas import DataFrame, Series
 # import pandas as pd
 
-os.chdir("D:/10. 대학원/04. Source/09. VM_Source/10. DynamicSampling/")
+os.chdir("D:/10. 대학원/04. Source/09. VM_Source/11. P2DynamicSampling/")
 
 A_p1 = np.array([[0.5, -0.2], [0.25, 0.15]])    #recipe gain matrix
 d_p1 = np.array([[0.1, 0], [0.05, 0]])  #drift matrix
